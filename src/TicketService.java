@@ -1,5 +1,3 @@
-import java.math.BigDecimal;
-
 public class TicketService {
     public static void main(String[] args) {
         Ticket empty = new Ticket();
@@ -9,7 +7,7 @@ public class TicketService {
                 123,
                 false,
                 "A",
-                new BigDecimal("1.000"),
+                1.000,
                 200.00
         );
 
