@@ -1,21 +1,17 @@
+import java.util.NoSuchElementException;
+
 public class TicketService {
     public static void main(String[] args) {
-        Ticket empty = new Ticket();
-        Ticket full = new Ticket(
-                "1234",
-                "Red Hall",
-                123,
-                false,
-                "A",
-                1.000,
-                200.00
-        );
-
-        Ticket limited = new Ticket(
-                "Red Hall",
-                123);
-        System.out.println(empty);
-        System.out.println(full);
-        System.out.println(limited);
+        Ticket[] tickets = new Ticket[10];
+        for (int i = 0; i < tickets.length; i++) {
+            tickets[i] = new Ticket("ID" + (i + 1),
+                    "Red Hall",
+                    123,
+                    false,
+                    "A",
+                    1.000,
+                    200.00);
+            System.out.println(tickets[i]);
+        }
     }
 }
