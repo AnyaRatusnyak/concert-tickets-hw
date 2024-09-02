@@ -97,10 +97,6 @@ public class Ticket {
         this.price = price;
     }
 
-    public String getId() {
-        return id;
-    }
-
     public String getStadiumSector() {
         return stadiumSector;
     }
