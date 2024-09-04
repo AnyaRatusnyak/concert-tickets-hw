@@ -22,7 +22,6 @@ public class TicketService {
             System.out.println(ticket);
         }
     }
-}
 
     private static Ticket[] findByStadiumSector(String sector, Ticket[] tickets) {
         List<Ticket> ticketsInSector = new ArrayList<>();
