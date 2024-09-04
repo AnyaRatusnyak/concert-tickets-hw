@@ -97,6 +97,10 @@ public class Ticket {
         this.price = price;
     }
 
+    public String getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "Ticket{" +
