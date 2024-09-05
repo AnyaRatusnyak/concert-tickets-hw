@@ -101,6 +101,10 @@ public class Ticket {
         return id;
     }
 
+    public String getStadiumSector() {
+        return stadiumSector;
+    }
+
     @Override
     public String toString() {
         return "Ticket{" +

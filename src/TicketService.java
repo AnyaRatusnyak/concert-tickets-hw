@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class TicketService {
@@ -20,6 +22,13 @@ public class TicketService {
         } catch (NoSuchElementException e) {
             System.out.println("Ticket with id " + searchId + " not found.");
         }
+
+        String sector = "A";
+        Ticket[] ticketsBySector = findByStadiumSector(sector, tickets);
+        System.out.println("Tickets in sector " + sector + ":");
+        for (Ticket ticket : ticketsBySector) {
+            System.out.println(ticket);
+        }
     }
 
     private static Ticket findById(String id, Ticket[] tickets) {
@@ -29,5 +38,15 @@ public class TicketService {
             }
         }
         throw new NoSuchElementException("No ticket found with ID: " + id);
+    }
+
+    private static Ticket[] findByStadiumSector(String sector, Ticket[] tickets) {
+        List<Ticket> ticketsInSector = new ArrayList<>();
+        for (Ticket ticket : tickets) {
+            if (ticket.getStadiumSector().equals(sector)) {
+                ticketsInSector.add(ticket);
+            }
+        }
+        return ticketsInSector.toArray(new Ticket[0]);
     }
 }
