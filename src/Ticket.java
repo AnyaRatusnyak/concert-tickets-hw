@@ -97,8 +97,8 @@ public class Ticket {
         this.price = price;
     }
 
-    public String getStadiumSector() {
-        return stadiumSector;
+    public String getId() {
+        return id;
     }
 
     @Override

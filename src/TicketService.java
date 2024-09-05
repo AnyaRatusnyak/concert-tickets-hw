@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.NoSuchElementException;
 
 public class TicketService {
     public static void main(String[] args) {
@@ -14,22 +13,21 @@ public class TicketService {
                     200.00);
             System.out.println(tickets[i]);
         }
-
-        String sector = "A";
-        Ticket[] ticketsBySector = findByStadiumSector(sector, tickets);
-        System.out.println("Tickets in sector " + sector + ":");
-        for (Ticket ticket : ticketsBySector) {
-            System.out.println(ticket);
+        String searchId = "ID3";
+        try {
+            Ticket ticketById = findById(searchId, tickets);
+            System.out.println("Found ticket: " + ticketById);
+        } catch (NoSuchElementException e) {
+            System.out.println("Ticket with id " + searchId + " not found.");
         }
     }
 
-    private static Ticket[] findByStadiumSector(String sector, Ticket[] tickets) {
-        List<Ticket> ticketsInSector = new ArrayList<>();
+    private static Ticket findById(String id, Ticket[] tickets) {
         for (Ticket ticket : tickets) {
-            if (ticket.getStadiumSector().equals(sector)) {
-                ticketsInSector.add(ticket);
+            if (ticket.getId().equals(id)) {
+                return ticket;
             }
         }
-        return ticketsInSector.toArray(new Ticket[0]);
+        throw new NoSuchElementException("No ticket found with ID: " + id);
     }
 }
