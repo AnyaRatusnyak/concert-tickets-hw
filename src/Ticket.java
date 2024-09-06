@@ -33,8 +33,8 @@ public class Ticket extends IdentifiableEntity {
         this.price = price;
     }
 
-    public Ticket(String concertHall, int eventCode) {
-        super(0);
+    public Ticket(int id, String concertHall, int eventCode) {
+        super(id);
         validateFields(
                 concertHall,
                 eventCode,

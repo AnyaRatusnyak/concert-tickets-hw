@@ -1,4 +1,4 @@
-import util.AnnotationChecker;
+import util.NullableWarningValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,24 +32,24 @@ public class TicketService {
             System.out.println(ticket);
         }
 
-        Client client = new Client(1);
+        User client = new Client(1);
         client.printRole();
-        Ticket clientTicket = client.getTicket();
+        Ticket clientTicket = ((Client)client).getTicket();
         clientTicket.setId(5);
         clientTicket.shared("+380971111111", "example@gmail.com");
         clientTicket.shared("+380971111111");
         clientTicket.print();
 
-        Admin admin = new Admin(1);
+        User admin = new Admin(1);
         admin.printRole();
-        System.out.println(admin.checkTicket(clientTicket));
+        System.out.println(((Admin)admin).checkTicket(clientTicket));
 
         Ticket ticket1 = new Ticket();
         Ticket ticket2 = new Ticket();
         System.out.println(ticket1.equals(ticket2));
         System.out.println(ticket1.hashCode() == ticket2.hashCode());
 
-        AnnotationChecker.checkNulls(clientTicket);
+        NullableWarningValidator.checkNulls(clientTicket);
     }
 
     private static Ticket findById(int id, Ticket[] tickets) {

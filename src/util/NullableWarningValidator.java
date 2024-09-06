@@ -4,7 +4,7 @@ import annotation.NullableWarning;
 
 import java.lang.reflect.Field;
 
-public class AnnotationChecker {
+public class NullableWarningValidator {
     public static void checkNulls(Object obj) {
         Class<?> clazz = obj.getClass();
         Field[] fields = clazz.getDeclaredFields();
