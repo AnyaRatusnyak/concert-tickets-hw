@@ -1,3 +1,5 @@
+import util.AnnotationChecker;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -6,7 +8,7 @@ public class TicketService {
     public static void main(String[] args) {
         Ticket[] tickets = new Ticket[10];
         for (int i = 0; i < tickets.length; i++) {
-            tickets[i] = new Ticket("ID" + (i + 1),
+            tickets[i] = new Ticket(i + 1,
                     "Red Hall",
                     123,
                     false,
@@ -15,7 +17,7 @@ public class TicketService {
                     200.00);
             System.out.println(tickets[i]);
         }
-        String searchId = "ID3";
+        int searchId = 3;
         try {
             Ticket ticketById = findById(searchId, tickets);
             System.out.println("Found ticket: " + ticketById);
@@ -29,11 +31,30 @@ public class TicketService {
         for (Ticket ticket : ticketsBySector) {
             System.out.println(ticket);
         }
+
+        Client client = new Client(1);
+        client.printRole();
+        Ticket clientTicket = client.getTicket();
+        clientTicket.setId(5);
+        clientTicket.shared("+380971111111", "example@gmail.com");
+        clientTicket.shared("+380971111111");
+        clientTicket.print();
+
+        Admin admin = new Admin(1);
+        admin.printRole();
+        System.out.println(admin.checkTicket(clientTicket));
+
+        Ticket ticket1 = new Ticket();
+        Ticket ticket2 = new Ticket();
+        System.out.println(ticket1.equals(ticket2));
+        System.out.println(ticket1.hashCode() == ticket2.hashCode());
+
+        AnnotationChecker.checkNulls(clientTicket);
     }
 
-    private static Ticket findById(String id, Ticket[] tickets) {
+    private static Ticket findById(int id, Ticket[] tickets) {
         for (Ticket ticket : tickets) {
-            if (ticket.getId().equals(id)) {
+            if (ticket.getId() == id) {
                 return ticket;
             }
         }
