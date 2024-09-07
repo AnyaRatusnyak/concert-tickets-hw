@@ -49,9 +49,8 @@ public class Ticket extends IdentifiableEntity {
         this.price = 0.00;
     }
 
-    public Ticket() {
-        super(0);
-
+    public Ticket(int id) {
+        super(id);
         this.concertHall = null;
         this.eventCode = 0;
         this.time = System.currentTimeMillis() / 1000;

@@ -8,7 +8,7 @@ public class Client extends User {
         System.out.println("I am Client ");
     }
 
-    public Ticket getTicket() {
-        return new Ticket();
+    public Ticket getTicket(int id) {
+        return new Ticket(id);
     }
 }

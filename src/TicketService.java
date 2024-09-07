@@ -34,7 +34,7 @@ public class TicketService {
 
         User client = new Client(1);
         client.printRole();
-        Ticket clientTicket = ((Client)client).getTicket();
+        Ticket clientTicket = ((Client)client).getTicket(1);
         clientTicket.setId(5);
         clientTicket.shared("+380971111111", "example@gmail.com");
         clientTicket.shared("+380971111111");
@@ -44,8 +44,8 @@ public class TicketService {
         admin.printRole();
         System.out.println(((Admin)admin).checkTicket(clientTicket));
 
-        Ticket ticket1 = new Ticket();
-        Ticket ticket2 = new Ticket();
+        Ticket ticket1 = new Ticket(1);
+        Ticket ticket2 = new Ticket(1);
         System.out.println(ticket1.equals(ticket2));
         System.out.println(ticket1.hashCode() == ticket2.hashCode());
 
