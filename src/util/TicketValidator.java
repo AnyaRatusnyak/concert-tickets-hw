@@ -29,59 +29,68 @@ public class TicketValidator {
         return mostFrequentError;
     }
 
-    public boolean validateBusTicket(BusTicket busTicket) {
+    public void validateBusTicket(BusTicket busTicket) {
         List<String> errorMessages = new ArrayList<>();
 
-        if (busTicket.getStartDate() == null || !isValidDate(busTicket.getStartDate())) {
-            calculateErrors("Invalid start date");
-            errorMessages.add("Error: Invalid start date: " + busTicket.getStartDate());
-        }
-
-        if (busTicket.getTicketType() == null) {
-            calculateErrors("Invalid ticket type");
-            errorMessages.add("Error: Invalid ticket type: null");
-        } else {
-            try {
-                BusTicket.TicketType.valueOf(busTicket.getTicketType().name());
-            } catch (IllegalArgumentException e) {
-                calculateErrors("Invalid ticket type");
-                errorMessages.add("Error: Invalid ticket type: " + busTicket.getTicketType());
-            }
-        }
-
-        if (busTicket.getTicketClass() == null) {
-            calculateErrors("Invalid ticket class");
-            errorMessages.add("Error: Invalid ticket class: null");
-        } else {
-            try {
-                BusTicket.TicketClass.valueOf(busTicket.getTicketClass().name());
-            } catch (IllegalArgumentException e) {
-                calculateErrors("Invalid ticket class");
-                errorMessages.add("Error: Invalid ticket class: " + busTicket.getTicketClass());
-            }
-        }
-        if (!isValidPrice(busTicket.getBusTicketPrice())) {
-            calculateErrors("Invalid price of ticket");
-            errorMessages.add("Error: Invalid price of ticket: " + busTicket.getBusTicketPrice());
-        }
+        validateStartDate(busTicket.getStartDate(), errorMessages);
+        validateTicketType(busTicket.getTicketType(), errorMessages);
+        validateTicketClass(busTicket.getTicketClass(), errorMessages);
+        validatePrice(busTicket.getBusTicketPrice(), errorMessages);
 
         if (!errorMessages.isEmpty()) {
             throw new IllegalArgumentException(String.join(", ", errorMessages));
         }
-
-        return true;
     }
 
-    private boolean isValidDate(String date) {
-        LocalDate checkingDate = LocalDate.parse(date);
-        return !(checkingDate.isBefore(LocalDate.now()));
+    private void validateStartDate(String date, List<String> errorMessages) {
+        if (date == null) {
+            calculateErrors("Invalid start date");
+            errorMessages.add("Error: Invalid start date: null");
+        } else {
+            LocalDate checkingDate = LocalDate.parse(date);
+            if (checkingDate.isBefore(LocalDate.now())) {
+                calculateErrors("Invalid start date");
+                errorMessages.add("Error: Invalid start date: " + date);
+            }
+        }
+    }
+
+    private void validateTicketType(BusTicket.TicketType ticketType, List<String> errorMessages) {
+        if (ticketType == null) {
+            calculateErrors("Invalid ticket type");
+            errorMessages.add("Error: Invalid ticket type: null");
+        } else {
+            try {
+                BusTicket.TicketType.valueOf(ticketType.name());
+            } catch (IllegalArgumentException e) {
+                calculateErrors("Invalid ticket type");
+                errorMessages.add("Error: Invalid ticket type: " + ticketType);
+            }
+        }
+    }
+
+    private void validateTicketClass(BusTicket.TicketClass ticketClass, List<String> errorMessages) {
+        if (ticketClass == null) {
+            calculateErrors("Invalid ticket class");
+            errorMessages.add("Error: Invalid ticket class: null");
+        } else {
+            try {
+                BusTicket.TicketClass.valueOf(ticketClass.name());
+            } catch (IllegalArgumentException e) {
+                calculateErrors("Invalid ticket class");
+                errorMessages.add("Error: Invalid ticket class: " + ticketClass);
+            }
+        }
+    }
+
+    private void validatePrice(int price, List<String> errorMessages) {
+        if (!(price > 0 && price % 2 == 0)) {
+            calculateErrors("Invalid price of ticket");
+            errorMessages.add("Error: Invalid price of ticket: " + price);
+        }
     }
 
     private void calculateErrors(String errorMessage) {
         statisticsErrors.put(errorMessage, statisticsErrors.getOrDefault(errorMessage, 0) + 1);
-    }
-
-    private boolean isValidPrice(int busTicketPrice) {
-        return busTicketPrice > 0 && busTicketPrice % 2 == 0;
     }
 }
