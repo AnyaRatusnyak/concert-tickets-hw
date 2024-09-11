@@ -1,4 +1,6 @@
+import model.*;
 import util.NullableWarningValidator;
+import util.TicketValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ public class TicketService {
             Ticket ticketById = findById(searchId, tickets);
             System.out.println("Found ticket: " + ticketById);
         } catch (NoSuchElementException e) {
-            System.out.println("Ticket with id " + searchId + " not found.");
+            System.out.println("model.Ticket with id " + searchId + " not found.");
         }
 
         String sector = "A";
@@ -50,8 +52,28 @@ public class TicketService {
         System.out.println(ticket1.hashCode() == ticket2.hashCode());
 
         NullableWarningValidator.checkNulls(clientTicket);
-    }
 
+        FileWork fileWork = new FileWork();
+
+        List<BusTicket> busTickets = fileWork.readFromFile("src/tickets.json");
+        TicketService.printTicketsInfo(busTickets);
+    }
+    private static void printTicketsInfo (List<BusTicket> busTickets){
+        TicketValidator validator = new TicketValidator();
+        int size = busTickets.size();
+        int validTickets = 0;
+        for (BusTicket item : busTickets) {
+            try {
+                validator.validateBusTicket(item);
+                validTickets++;
+            } catch (IllegalArgumentException e) {
+                System.out.println("Validation errors: " + e.getMessage());
+            }
+        }
+        System.out.println("Total= " + size);
+        System.out.println("Valid= " + validTickets);
+        System.out.println("Most popular violation= " + validator.getMostFrequentError());
+    }
     private static Ticket findById(int id, Ticket[] tickets) {
         for (Ticket ticket : tickets) {
             if (ticket.getId() == id) {
