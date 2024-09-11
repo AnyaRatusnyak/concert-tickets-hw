@@ -1,3 +1,5 @@
+package model;
+
 public class User extends IdentifiableEntity {
     public User(int id) {
         super(id);

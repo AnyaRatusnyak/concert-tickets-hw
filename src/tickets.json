@@ -1,0 +1,26 @@
+[
+  {
+    "ticketClass": "CLA",
+    "ticketType": "DAY",
+    "startDate": "2025-01-01",
+    "busTicketPrice": 0
+  },
+  {
+    "ticketClass": "STD",
+    "ticketType": "DAY",
+    "startDate": "2025-01-01",
+    "busTicketPrice": 10
+  },
+  {
+    "ticketClass": null,
+    "ticketType": "PRIME",
+    "startDate": null,
+    "busTicketPrice": 1000
+  },
+  {
+    "ticketClass": "CLA",
+    "ticketType": null,
+    "startDate": "2021-09-11",
+    "busTicketPrice": 0
+  }
+]

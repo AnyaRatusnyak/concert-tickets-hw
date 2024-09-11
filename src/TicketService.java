@@ -1,4 +1,6 @@
+import model.*;
 import util.NullableWarningValidator;
+import util.TicketValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,7 @@ public class TicketService {
 
         User client = new Client(1);
         client.printRole();
-        Ticket clientTicket = ((Client)client).getTicket(1);
+        Ticket clientTicket = ((Client) client).getTicket(1);
         clientTicket.setId(5);
         clientTicket.shared("+380971111111", "example@gmail.com");
         clientTicket.shared("+380971111111");
@@ -42,7 +44,7 @@ public class TicketService {
 
         User admin = new Admin(1);
         admin.printRole();
-        System.out.println(((Admin)admin).checkTicket(clientTicket));
+        System.out.println(((Admin) admin).checkTicket(clientTicket));
 
         Ticket ticket1 = new Ticket(1);
         Ticket ticket2 = new Ticket(1);
@@ -50,6 +52,28 @@ public class TicketService {
         System.out.println(ticket1.hashCode() == ticket2.hashCode());
 
         NullableWarningValidator.checkNulls(clientTicket);
+
+        FileWork fileWork = new FileWork();
+
+        List<BusTicket> busTickets = fileWork.readFromFile("src/tickets.json");
+        TicketService.printTicketsInfo(busTickets);
+    }
+
+    private static void printTicketsInfo(List<BusTicket> busTickets) {
+        TicketValidator validator = new TicketValidator();
+        int size = busTickets.size();
+        int validTickets = 0;
+        for (BusTicket item : busTickets) {
+            try {
+                validator.validateBusTicket(item);
+                validTickets++;
+            } catch (IllegalArgumentException e) {
+                System.out.println("Validation errors: " + e.getMessage());
+            }
+        }
+        System.out.println("Total= " + size);
+        System.out.println("Valid= " + validTickets);
+        System.out.println("Most popular violation= " + validator.getMostFrequentError());
     }
 
     private static Ticket findById(int id, Ticket[] tickets) {

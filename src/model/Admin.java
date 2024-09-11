@@ -1,4 +1,6 @@
-public class Admin extends User{
+package model;
+
+public class Admin extends User {
     public Admin(int id) {
         super(id);
     }
@@ -8,7 +10,7 @@ public class Admin extends User{
         System.out.println("I am Admin ");
     }
 
-    public boolean checkTicket(Ticket ticket){
+    public boolean checkTicket(Ticket ticket) {
         return ticket.getId() != 0;
     }
 }
