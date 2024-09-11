@@ -1,16 +1,16 @@
 package model;
 
-public class Admin extends User{
+public class Admin extends User {
     public Admin(int id) {
         super(id);
     }
 
     @Override
     public void printRole() {
-        System.out.println("I am model.Admin ");
+        System.out.println("I am Admin ");
     }
 
-    public boolean checkTicket(Ticket ticket){
+    public boolean checkTicket(Ticket ticket) {
         return ticket.getId() != 0;
     }
 }

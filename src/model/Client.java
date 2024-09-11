@@ -7,7 +7,7 @@ public class Client extends User {
 
     @Override
     public void printRole() {
-        System.out.println("I am model.Client ");
+        System.out.println("I am Client ");
     }
 
     public Ticket getTicket(int id) {

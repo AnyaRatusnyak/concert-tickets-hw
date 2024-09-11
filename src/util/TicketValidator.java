@@ -1,4 +1,5 @@
 package util;
+
 import model.BusTicket;
 
 import java.time.LocalDate;
@@ -8,7 +9,26 @@ import java.util.List;
 import java.util.Map;
 
 public class TicketValidator {
-    Map<String,Integer> statisticsErrors = new HashMap<>();
+    Map<String, Integer> statisticsErrors = new HashMap<>();
+
+    public String getMostFrequentError() {
+        if (statisticsErrors.isEmpty()) {
+            return "No errors recorded";
+        }
+        String mostFrequentError = null;
+        int maxCount = 0;
+        for (Map.Entry<String, Integer> entry : statisticsErrors.entrySet()) {
+            String error = entry.getKey();
+            int count = entry.getValue();
+            if (count > maxCount) {
+                mostFrequentError = error;
+                maxCount = count;
+            }
+        }
+
+        return mostFrequentError;
+    }
+
     public boolean validateBusTicket(BusTicket busTicket) {
         List<String> errorMessages = new ArrayList<>();
 
@@ -52,34 +72,16 @@ public class TicketValidator {
         return true;
     }
 
-    private boolean isValidDate(String date){
+    private boolean isValidDate(String date) {
         LocalDate checkingDate = LocalDate.parse(date);
         return !(checkingDate.isBefore(LocalDate.now()));
     }
 
-    private void calculateErrors(String errorMessage){
-        statisticsErrors.put(errorMessage,statisticsErrors.getOrDefault(errorMessage,0) + 1);
+    private void calculateErrors(String errorMessage) {
+        statisticsErrors.put(errorMessage, statisticsErrors.getOrDefault(errorMessage, 0) + 1);
     }
 
-    private boolean isValidPrice(int busTicketPrice){
+    private boolean isValidPrice(int busTicketPrice) {
         return busTicketPrice > 0 && busTicketPrice % 2 == 0;
-    }
-
-    public String getMostFrequentError() {
-        if (statisticsErrors.isEmpty()) {
-            return "No errors recorded";
-        }
-        String mostFrequentError = null;
-        int maxCount = 0;
-        for (Map.Entry<String, Integer> entry : statisticsErrors.entrySet()) {
-            String error = entry.getKey();
-            int count = entry.getValue();
-            if (count > maxCount) {
-                mostFrequentError = error;
-                maxCount = count;
-            }
-        }
-
-        return mostFrequentError;
     }
 }

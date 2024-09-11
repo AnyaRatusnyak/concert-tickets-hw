@@ -1,10 +1,10 @@
 package model;
 
-public class BusTicket extends Ticket{
-private TicketClass ticketClass;
-private TicketType ticketType;
-private String startDate;
-private int busTicketPrice;
+public class BusTicket extends Ticket {
+    private TicketClass ticketClass;
+    private TicketType ticketType;
+    private String startDate;
+    private int busTicketPrice;
 
     public BusTicket(int id, TicketClass ticketClass, TicketType ticketType, String startDate, int busTicketPrice) {
         super(id);
@@ -42,10 +42,10 @@ private int busTicketPrice;
     }
 
     public enum TicketClass {
-CLA, STD
-}
+        CLA, STD
+    }
 
-public enum TicketType  {
-       DAY, WEEK,MONTH,YEAR
+    public enum TicketType {
+        DAY, WEEK, MONTH, YEAR
     }
 }

@@ -6,6 +6,6 @@ public class User extends IdentifiableEntity {
     }
 
     public void printRole() {
-        System.out.println("I am model.User");
+        System.out.println("I am User");
     }
 }

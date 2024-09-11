@@ -9,12 +9,13 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 public class FileWork {
-    public List<BusTicket>readFromFile(String fileName){
+    public List<BusTicket> readFromFile(String fileName) {
         File file = new File(fileName);
         Gson gson = new Gson();
         try {
             FileReader reader = new FileReader(file);
-            Type busTicketListType = new TypeToken<List<BusTicket>>(){}.getType();
+            Type busTicketListType = new TypeToken<List<BusTicket>>() {
+            }.getType();
             List<BusTicket> busTickets = gson.fromJson(reader, busTicketListType);
 
             for (BusTicket busTicket : busTickets) {

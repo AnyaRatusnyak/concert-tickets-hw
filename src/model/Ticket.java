@@ -70,16 +70,16 @@ public class Ticket extends IdentifiableEntity {
     }
 
     public void shared(String phoneNumber) {
-        System.out.println("model.Ticket shared by phone: " + phoneNumber);
+        System.out.println("Ticket shared by phone: " + phoneNumber);
     }
 
     public void shared(String phoneNumber, String email) {
-        System.out.println("model.Ticket shared by phone: " + phoneNumber + " and by e-mail: " + email);
+        System.out.println("Ticket shared by phone: " + phoneNumber + " and by e-mail: " + email);
     }
 
     @Override
     public void print() {
-        System.out.println("model.Ticket Details:");
+        System.out.println("Ticket Details:");
         System.out.println(this);
     }
 
@@ -112,7 +112,7 @@ public class Ticket extends IdentifiableEntity {
 
     @Override
     public String toString() {
-        return "model.Ticket{" +
+        return "Ticket{" +
                 "concertHall='" + concertHall + '\'' +
                 ", eventCode=" + eventCode +
                 ", time=" + time +

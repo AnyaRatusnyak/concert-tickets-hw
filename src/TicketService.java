@@ -24,7 +24,7 @@ public class TicketService {
             Ticket ticketById = findById(searchId, tickets);
             System.out.println("Found ticket: " + ticketById);
         } catch (NoSuchElementException e) {
-            System.out.println("model.Ticket with id " + searchId + " not found.");
+            System.out.println("Ticket with id " + searchId + " not found.");
         }
 
         String sector = "A";
@@ -36,7 +36,7 @@ public class TicketService {
 
         User client = new Client(1);
         client.printRole();
-        Ticket clientTicket = ((Client)client).getTicket(1);
+        Ticket clientTicket = ((Client) client).getTicket(1);
         clientTicket.setId(5);
         clientTicket.shared("+380971111111", "example@gmail.com");
         clientTicket.shared("+380971111111");
@@ -44,7 +44,7 @@ public class TicketService {
 
         User admin = new Admin(1);
         admin.printRole();
-        System.out.println(((Admin)admin).checkTicket(clientTicket));
+        System.out.println(((Admin) admin).checkTicket(clientTicket));
 
         Ticket ticket1 = new Ticket(1);
         Ticket ticket2 = new Ticket(1);
@@ -58,7 +58,8 @@ public class TicketService {
         List<BusTicket> busTickets = fileWork.readFromFile("src/tickets.json");
         TicketService.printTicketsInfo(busTickets);
     }
-    private static void printTicketsInfo (List<BusTicket> busTickets){
+
+    private static void printTicketsInfo(List<BusTicket> busTickets) {
         TicketValidator validator = new TicketValidator();
         int size = busTickets.size();
         int validTickets = 0;
@@ -74,6 +75,7 @@ public class TicketService {
         System.out.println("Valid= " + validTickets);
         System.out.println("Most popular violation= " + validator.getMostFrequentError());
     }
+
     private static Ticket findById(int id, Ticket[] tickets) {
         for (Ticket ticket : tickets) {
             if (ticket.getId() == id) {
