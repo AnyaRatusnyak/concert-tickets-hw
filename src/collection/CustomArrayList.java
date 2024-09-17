@@ -14,10 +14,7 @@ public class CustomArrayList<T> extends AbstractList<T> implements List<T>{
 
     @Override
     public void add(int index, T value) {
-        if (index < 0 || index > size) {
-            throw new ArrayIndexOutOfBoundsException("the index " + index  +
-                    " is invalid, current size of the list is " + size);
-        }
+        checkPositionIndex(index);
         growIfFull();
         System.arraycopy(elementData, index, elementData, index + 1, size - index);
         elementData[index] = value;
