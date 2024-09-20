@@ -55,7 +55,7 @@ public class TicketService {
 
         FileWork fileWork = new FileWork();
 
-        List<BusTicket> busTickets = fileWork.readFromFile("src/tickets.json");
+        List<BusTicket> busTickets = fileWork.readFromFile("src/main/resources/tickets.json");
         TicketService.printTicketsInfo(busTickets);
     }
 
