@@ -7,11 +7,15 @@ import java.sql.*;
 
 
 public class UserDataBaseDaoImpl implements UserDataBaseDao {
+    private static final String SQL_INSERT = "INSERT INTO user_data_base (name, creation_date) VALUES (?, ?)";
+    private static final String SQL_SELECT = "SELECT * FROM user_data_base WHERE id = ?";
+    private static final String SQL_DELETE_TICKETS = "DELETE FROM ticket_data_base WHERE user_id = ?";
+    private static final String SQL_DELETE_USER = "DELETE FROM user_data_base WHERE id = ?";
+
     @Override
     public UserDataBase save(UserDataBase userDataBase) {
-        String sql = "INSERT INTO user_data_base (name, creation_date) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, userDataBase.getName());
             statement.setDate(2, java.sql.Date.valueOf(userDataBase.getCreationDate()));
             int updatedRows = statement.executeUpdate();
@@ -32,9 +36,8 @@ public class UserDataBaseDaoImpl implements UserDataBaseDao {
 
     @Override
     public UserDataBase get(Long id) {
-        String sql = "SELECT * FROM user_data_base WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -55,13 +58,10 @@ public class UserDataBaseDaoImpl implements UserDataBaseDao {
 
     @Override
     public boolean delete(Long id) {
-        String deleteTicketsSql = "DELETE FROM ticket_data_base WHERE user_id = ?";
-        String deleteUserSql = "DELETE FROM user_data_base WHERE id = ?";
-
         try (Connection connection = ConnectionUtil.getConnection()) {
             connection.setAutoCommit(false);
-            try (PreparedStatement deleteTicketsStatement = connection.prepareStatement(deleteTicketsSql);
-                 PreparedStatement deleteUserStatement = connection.prepareStatement(deleteUserSql)) {
+            try (PreparedStatement deleteTicketsStatement = connection.prepareStatement(SQL_DELETE_TICKETS);
+                 PreparedStatement deleteUserStatement = connection.prepareStatement(SQL_DELETE_USER)) {
 
                 deleteTicketsStatement.setLong(1, id);
                 deleteTicketsStatement.executeUpdate();
