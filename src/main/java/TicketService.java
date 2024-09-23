@@ -1,7 +1,12 @@
+import dao.TicketDataBaseDao;
+import dao.TicketDataBaseDaoImpl;
+import dao.UserDataBaseDao;
+import dao.UserDataBaseDaoImpl;
 import model.*;
 import util.NullableWarningValidator;
 import util.TicketValidator;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -57,6 +62,31 @@ public class TicketService {
 
         List<BusTicket> busTickets = fileWork.readFromFile("src/main/resources/tickets.json");
         TicketService.printTicketsInfo(busTickets);
+
+        UserDataBaseDao userDataBaseDao = new UserDataBaseDaoImpl();
+        UserDataBase alex = new UserDataBase();
+        LocalDate date = LocalDate.of(2024, 9, 20);
+        alex.setName("Alex");
+        alex.setCreationDate(date);
+        TicketDataBaseDao ticketDataBaseDao = new TicketDataBaseDaoImpl();
+
+        TicketDataBase alexTicket1 = new TicketDataBase();
+        alexTicket1.setTicketType(BusTicket.TicketType.WEEK);
+        alexTicket1.setCreationDate(date);
+        alexTicket1.setUserId(14L);
+        System.out.println(ticketDataBaseDao.save(alexTicket1));
+
+        TicketDataBase alexTicket2 = new TicketDataBase();
+        alexTicket2.setTicketType(BusTicket.TicketType.YEAR);
+        alexTicket2.setCreationDate(date);
+        alexTicket2.setUserId(14L);
+        System.out.println(ticketDataBaseDao.save(alexTicket2));
+
+        System.out.println(userDataBaseDao.get(14L));
+
+        System.out.println(ticketDataBaseDao.getByUserId(14L));
+        System.out.println(userDataBaseDao.delete(14L));
+        System.out.println(ticketDataBaseDao.getByUserId(14L));
     }
 
     private static void printTicketsInfo(List<BusTicket> busTickets) {
@@ -93,5 +123,5 @@ public class TicketService {
             }
         }
         return ticketsInSector.toArray(new Ticket[0]);
-    }
+   }
 }
