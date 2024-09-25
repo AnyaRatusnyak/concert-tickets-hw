@@ -4,7 +4,6 @@ import jakarta.persistence.Query;
 import model.TicketDataBase;
 import model.UserDataBase;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import util.HibernateUtil;
 
@@ -20,11 +19,8 @@ public class UserDataBaseDaoImpl implements UserDataBaseDao {
 
     @Override
     public UserDataBase save(UserDataBase userDataBase) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = null;
         Transaction transaction = null;
-        try {
-            session = sessionFactory.openSession();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.save(userDataBase);
             transaction.commit();
@@ -33,10 +29,6 @@ public class UserDataBaseDaoImpl implements UserDataBaseDao {
                 transaction.rollback();
             }
             throw new RuntimeException("Error while saving a user");
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
         return userDataBase;
     }
@@ -52,11 +44,8 @@ public class UserDataBaseDaoImpl implements UserDataBaseDao {
 
     @Override
     public UserDataBase updateUserAndTickets(Long userId, UserDataBase updatedUser, List<TicketDataBase> updatedTickets) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = null;
         Transaction transaction = null;
-        try {
-            session = sessionFactory.openSession();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             UserDataBase user = session.get(UserDataBase.class, userId);
             if (user == null) {
@@ -76,51 +65,31 @@ public class UserDataBaseDaoImpl implements UserDataBaseDao {
                 }
             }
             transaction.commit();
-
             return user;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             throw new RuntimeException("Error while updating user and tickets for user with id " + userId, e);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 
     @Override
     public boolean delete(Long id) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = null;
-        Transaction transaction = null;
-
-        try {
-            session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
             Query deleteTicketsQuery = session.createQuery(QUERY_DELETE_TICKETS);
             deleteTicketsQuery.setParameter("userId", id);
             deleteTicketsQuery.executeUpdate();
-
             UserDataBase user = session.get(UserDataBase.class, id);
-            if (user != null) {
-                session.delete(user);
-            } else {
+            if (user == null) {
                 throw new RuntimeException("User with id " + id + " does not exist");
             }
-
+            session.delete(user);
             transaction.commit();
+            return true;
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new RuntimeException("Error while deleting user with id " + id, e);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
-        return true;
     }
 }

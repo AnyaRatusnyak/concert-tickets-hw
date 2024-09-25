@@ -64,25 +64,23 @@ public class TicketService {
 
         TicketDataBaseDao ticketDataBaseDao = new TicketDataBaseDaoImpl();
         UserDataBaseDao userDataBaseDao = new UserDataBaseDaoImpl(ticketDataBaseDao);
-        TicketDataBase dimaTicket10 = new TicketDataBase();
-        dimaTicket10.setTicketType(BusTicket.TicketType.WEEK);
-        dimaTicket10.setCreationDate(LocalDate.of(2024, 9, 20));
-        dimaTicket10.setUser(userDataBaseDao.get(2L));
-        System.out.println(ticketDataBaseDao.save(dimaTicket10));
+        System.out.println(userDataBaseDao.get(2L));
         System.out.println(ticketDataBaseDao.getByUserId(2L));
 
+        UserDataBase updateUser = userDataBaseDao.get(2L);
+        updateUser.setName("Dimonchik");
         TicketDataBase updateTicket = new TicketDataBase();
-        updateTicket.setId(3L);
+        updateTicket.setId(5L);
         updateTicket.setTicketType(BusTicket.TicketType.DAY);
         updateTicket.setCreationDate(LocalDate.of(2024, 9, 20));
         updateTicket.setUser(userDataBaseDao.get(2L));
 
-        UserDataBase updateUser = userDataBaseDao.get(2L);
-        updateUser.setName("Dimonchik");
-
         userDataBaseDao.updateUserAndTickets(2L, updateUser, List.of(updateTicket));
         System.out.println(userDataBaseDao.get(2L));
         System.out.println(ticketDataBaseDao.getByUserId(2L));
+        System.out.println(ticketDataBaseDao.getByUserId(2L));
+
+
     }
 
     private static void printTicketsInfo(List<BusTicket> busTickets) {

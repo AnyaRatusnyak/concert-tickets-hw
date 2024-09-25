@@ -3,21 +3,18 @@ package dao;
 import model.BusTicket;
 import model.TicketDataBase;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import util.HibernateUtil;
+
 import java.util.List;
 
 public class TicketDataBaseDaoImpl implements TicketDataBaseDao {
 
     @Override
     public TicketDataBase save(TicketDataBase ticketDataBase) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = null;
         Transaction transaction = null;
-        try {
-            session = sessionFactory.openSession();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.save(ticketDataBase);
             transaction.commit();
@@ -25,11 +22,7 @@ public class TicketDataBaseDaoImpl implements TicketDataBaseDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Error while saving a ticket");
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            throw new RuntimeException("Error while saving a ticket", e);
         }
         return ticketDataBase;
     }
@@ -58,14 +51,9 @@ public class TicketDataBaseDaoImpl implements TicketDataBaseDao {
 
     @Override
     public TicketDataBase updateTicketType(Long id, BusTicket.TicketType ticketType) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = null;
         Transaction transaction = null;
-
-        try {
-            session = sessionFactory.openSession();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-
             TicketDataBase ticketDataBase = session.get(TicketDataBase.class, id);
             if (ticketDataBase == null) {
                 throw new RuntimeException("Ticket with ID: " + id + " not found");
@@ -79,21 +67,13 @@ public class TicketDataBaseDaoImpl implements TicketDataBaseDao {
                 transaction.rollback();
             }
             throw new RuntimeException("Error while updating ticket type for ticket with ID: " + id, e);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 
     @Override
     public boolean delete(Long id) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = null;
         Transaction transaction = null;
-
-        try {
-            session = sessionFactory.openSession();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             TicketDataBase ticketDataBase = session.get(TicketDataBase.class, id);
             if (ticketDataBase == null) {
@@ -107,10 +87,6 @@ public class TicketDataBaseDaoImpl implements TicketDataBaseDao {
                 transaction.rollback();
             }
             throw new RuntimeException("Error while deleting ticket with ID: " + id, e);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 }
