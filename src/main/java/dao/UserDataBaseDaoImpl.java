@@ -1,84 +1,95 @@
 package dao;
 
+import jakarta.persistence.Query;
+import model.TicketDataBase;
 import model.UserDataBase;
-import util.ConnectionUtil;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import util.HibernateUtil;
 
-import java.sql.*;
-
+import java.util.List;
 
 public class UserDataBaseDaoImpl implements UserDataBaseDao {
-    private static final String SQL_INSERT = "INSERT INTO user_data_base (name, creation_date) VALUES (?, ?)";
-    private static final String SQL_SELECT = "SELECT * FROM user_data_base WHERE id = ?";
-    private static final String SQL_DELETE_TICKETS = "DELETE FROM ticket_data_base WHERE user_id = ?";
-    private static final String SQL_DELETE_USER = "DELETE FROM user_data_base WHERE id = ?";
+    private final TicketDataBaseDao ticketDataBaseDao;
+    private static final String QUERY_DELETE_TICKETS = "DELETE FROM TicketDataBase t WHERE t.user.id = :userId";
+
+    public UserDataBaseDaoImpl(TicketDataBaseDao ticketDataBaseDao) {
+        this.ticketDataBaseDao = ticketDataBaseDao;
+    }
 
     @Override
     public UserDataBase save(UserDataBase userDataBase) {
-        try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, userDataBase.getName());
-            statement.setDate(2, java.sql.Date.valueOf(userDataBase.getCreationDate()));
-            int updatedRows = statement.executeUpdate();
-            if (updatedRows < 1) {
-                throw new RuntimeException("Inserted 0 rows");
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.save(userDataBase);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(1, Long.class);
-                userDataBase.setId(id);
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't add a new user to DB", e);
+            throw new RuntimeException("Error while saving a user");
         }
         return userDataBase;
     }
 
     @Override
     public UserDataBase get(Long id) {
-        try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
-            statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                String userName = resultSet.getString("name");
-                Date date = resultSet.getObject("creation_date", Date.class);
-
-                UserDataBase userDataBase = new UserDataBase();
-                userDataBase.setId(id);
-                userDataBase.setName(userName);
-                userDataBase.setCreationDate(date.toLocalDate());
-                return userDataBase;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't create connection to DB", e);
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.get(UserDataBase.class, id);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Can't get user with id " + id);
         }
-        return null;
+    }
+
+    @Override
+    public UserDataBase updateUserAndTickets(Long userId, UserDataBase updatedUser, List<TicketDataBase> updatedTickets) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            UserDataBase user = session.get(UserDataBase.class, userId);
+            if (user == null) {
+                throw new RuntimeException("User with id " + userId + " does not exist");
+            }
+            user.setName(updatedUser.getName());
+            user.setCreationDate(updatedUser.getCreationDate());
+            session.update(user);
+            List<TicketDataBase> existingTickets = ticketDataBaseDao.getByUserId(userId);
+            for (TicketDataBase ticket : existingTickets) {
+                for (TicketDataBase updatedTicket : updatedTickets) {
+                    if (ticket.getId().equals(updatedTicket.getId())) {
+                        ticket.setTicketType(updatedTicket.getTicketType());
+                        ticket.setCreationDate(updatedTicket.getCreationDate());
+                        session.update(ticket);
+                    }
+                }
+            }
+            transaction.commit();
+            return user;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new RuntimeException("Error while updating user and tickets for user with id " + userId, e);
+        }
     }
 
     @Override
     public boolean delete(Long id) {
-        try (Connection connection = ConnectionUtil.getConnection()) {
-            connection.setAutoCommit(false);
-            try (PreparedStatement deleteTicketsStatement = connection.prepareStatement(SQL_DELETE_TICKETS);
-                 PreparedStatement deleteUserStatement = connection.prepareStatement(SQL_DELETE_USER)) {
-
-                deleteTicketsStatement.setLong(1, id);
-                deleteTicketsStatement.executeUpdate();
-
-                deleteUserStatement.setLong(1, id);
-                deleteUserStatement.executeUpdate();
-
-                connection.commit();
-            } catch (SQLException e) {
-                connection.rollback();
-                throw new RuntimeException("Transaction failed. Rolled back.", e);
-            } finally {
-                connection.setAutoCommit(true);
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query deleteTicketsQuery = session.createQuery(QUERY_DELETE_TICKETS);
+            deleteTicketsQuery.setParameter("userId", id);
+            deleteTicketsQuery.executeUpdate();
+            UserDataBase user = session.get(UserDataBase.class, id);
+            if (user == null) {
+                throw new RuntimeException("User with id " + id + " does not exist");
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't create connection to DB", e);
+            session.delete(user);
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("Error while deleting user with id " + id, e);
         }
-        return true;
     }
 }

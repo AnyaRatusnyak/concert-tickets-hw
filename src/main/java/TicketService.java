@@ -57,36 +57,30 @@ public class TicketService {
         System.out.println(ticket1.hashCode() == ticket2.hashCode());
 
         NullableWarningValidator.checkNulls(clientTicket);
-
         FileWork fileWork = new FileWork();
 
         List<BusTicket> busTickets = fileWork.readFromFile("src/main/resources/tickets.json");
         TicketService.printTicketsInfo(busTickets);
 
-        UserDataBaseDao userDataBaseDao = new UserDataBaseDaoImpl();
-        UserDataBase alex = new UserDataBase();
-        LocalDate date = LocalDate.of(2024, 9, 20);
-        alex.setName("Alex");
-        alex.setCreationDate(date);
         TicketDataBaseDao ticketDataBaseDao = new TicketDataBaseDaoImpl();
+        UserDataBaseDao userDataBaseDao = new UserDataBaseDaoImpl(ticketDataBaseDao);
+        System.out.println(userDataBaseDao.get(2L));
+        System.out.println(ticketDataBaseDao.getByUserId(2L));
 
-        TicketDataBase alexTicket1 = new TicketDataBase();
-        alexTicket1.setTicketType(BusTicket.TicketType.WEEK);
-        alexTicket1.setCreationDate(date);
-        alexTicket1.setUserId(14L);
-        System.out.println(ticketDataBaseDao.save(alexTicket1));
+        UserDataBase updateUser = userDataBaseDao.get(2L);
+        updateUser.setName("Dimonchik");
+        TicketDataBase updateTicket = new TicketDataBase();
+        updateTicket.setId(5L);
+        updateTicket.setTicketType(BusTicket.TicketType.DAY);
+        updateTicket.setCreationDate(LocalDate.of(2024, 9, 20));
+        updateTicket.setUser(userDataBaseDao.get(2L));
 
-        TicketDataBase alexTicket2 = new TicketDataBase();
-        alexTicket2.setTicketType(BusTicket.TicketType.YEAR);
-        alexTicket2.setCreationDate(date);
-        alexTicket2.setUserId(14L);
-        System.out.println(ticketDataBaseDao.save(alexTicket2));
+        userDataBaseDao.updateUserAndTickets(2L, updateUser, List.of(updateTicket));
+        System.out.println(userDataBaseDao.get(2L));
+        System.out.println(ticketDataBaseDao.getByUserId(2L));
+        System.out.println(ticketDataBaseDao.getByUserId(2L));
 
-        System.out.println(userDataBaseDao.get(14L));
 
-        System.out.println(ticketDataBaseDao.getByUserId(14L));
-        System.out.println(userDataBaseDao.delete(14L));
-        System.out.println(ticketDataBaseDao.getByUserId(14L));
     }
 
     private static void printTicketsInfo(List<BusTicket> busTickets) {
@@ -123,5 +117,5 @@ public class TicketService {
             }
         }
         return ticketsInSector.toArray(new Ticket[0]);
-   }
+    }
 }
