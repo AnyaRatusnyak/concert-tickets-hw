@@ -3,18 +3,28 @@ package dao;
 import model.BusTicket;
 import model.TicketDataBase;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import util.HibernateUtil;
 
 import java.util.List;
 
+@Repository
 public class TicketDataBaseDaoImpl implements TicketDataBaseDao {
+    private final SessionFactory sessionFactory;
+
+    @Autowired
+    public TicketDataBaseDaoImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public TicketDataBase save(TicketDataBase ticketDataBase) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             session.save(ticketDataBase);
             transaction.commit();
@@ -29,7 +39,7 @@ public class TicketDataBaseDaoImpl implements TicketDataBaseDao {
 
     @Override
     public TicketDataBase get(Long id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             return session.get(TicketDataBase.class, id);
         } catch (RuntimeException e) {
             throw new RuntimeException("Can't get ticket with id " + id);
@@ -38,7 +48,7 @@ public class TicketDataBaseDaoImpl implements TicketDataBaseDao {
 
     @Override
     public List<TicketDataBase> getByUserId(Long id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             Query<TicketDataBase> query = session.createQuery(
                     "FROM TicketDataBase t WHERE t.user.id = :userId", TicketDataBase.class);
             query.setParameter("userId", id);
@@ -52,7 +62,7 @@ public class TicketDataBaseDaoImpl implements TicketDataBaseDao {
     @Override
     public TicketDataBase updateTicketType(Long id, BusTicket.TicketType ticketType) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             TicketDataBase ticketDataBase = session.get(TicketDataBase.class, id);
             if (ticketDataBase == null) {
@@ -73,7 +83,7 @@ public class TicketDataBaseDaoImpl implements TicketDataBaseDao {
     @Override
     public boolean delete(Long id) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             TicketDataBase ticketDataBase = session.get(TicketDataBase.class, id);
             if (ticketDataBase == null) {

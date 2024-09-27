@@ -1,11 +1,11 @@
+import config.AppConfig;
 import dao.TicketDataBaseDao;
-import dao.TicketDataBaseDaoImpl;
 import dao.UserDataBaseDao;
-import dao.UserDataBaseDaoImpl;
 import model.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import util.NullableWarningValidator;
 import util.TicketValidator;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +62,12 @@ public class TicketService {
         List<BusTicket> busTickets = fileWork.readFromFile("src/main/resources/tickets.json");
         TicketService.printTicketsInfo(busTickets);
 
-        TicketDataBaseDao ticketDataBaseDao = new TicketDataBaseDaoImpl();
-        UserDataBaseDao userDataBaseDao = new UserDataBaseDaoImpl(ticketDataBaseDao);
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+
+        TicketDataBaseDao ticketDataBaseDao = context.getBean(TicketDataBaseDao.class);
+        UserDataBaseDao userDataBaseDao = context.getBean(UserDataBaseDao.class);
+
+
         System.out.println(userDataBaseDao.get(2L));
         System.out.println(ticketDataBaseDao.getByUserId(2L));
 
