@@ -2,6 +2,7 @@ import config.AppConfig;
 import dao.TicketDataBaseDao;
 import dao.UserDataBaseDao;
 import model.*;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import util.NullableWarningValidator;
 import util.TicketValidator;
@@ -61,7 +62,7 @@ public class TicketService {
         List<BusTicket> busTickets = fileWork.readFromFile("src/main/resources/tickets.json");
         TicketService.printTicketsInfo(busTickets);
 
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
         TicketDataBaseDao ticketDataBaseDao = context.getBean(TicketDataBaseDao.class);
         UserDataBaseDao userDataBaseDao = context.getBean(UserDataBaseDao.class);
