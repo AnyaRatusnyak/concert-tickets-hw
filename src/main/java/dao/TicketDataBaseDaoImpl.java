@@ -5,10 +5,12 @@ import model.TicketDataBase;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.springframework.stereotype.Repository;
 import util.HibernateUtil;
 
 import java.util.List;
 
+@Repository
 public class TicketDataBaseDaoImpl implements TicketDataBaseDao {
 
     @Override

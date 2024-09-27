@@ -5,15 +5,18 @@ import model.TicketDataBase;
 import model.UserDataBase;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import util.HibernateUtil;
 
 import java.util.List;
 
+@Repository
 public class UserDataBaseDaoImpl implements UserDataBaseDao {
     private final TicketDataBaseDao ticketDataBaseDao;
     private static final String QUERY_DELETE_TICKETS = "DELETE FROM TicketDataBase t WHERE t.user.id = :userId";
 
-    public UserDataBaseDaoImpl(TicketDataBaseDao ticketDataBaseDao) {
+    public UserDataBaseDaoImpl(@Autowired TicketDataBaseDao ticketDataBaseDao) {
         this.ticketDataBaseDao = ticketDataBaseDao;
     }
 
