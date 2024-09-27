@@ -1,16 +1,20 @@
 package util;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class HibernateUtil {
-    private static SessionFactory instance = initSessionFactory();
 
-    private static SessionFactory initSessionFactory() {
-        return new Configuration().configure().buildSessionFactory();
+    private final SessionFactory sessionFactory;
+
+    @Autowired
+    public HibernateUtil(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
-    public static SessionFactory getSessionFactory() {
-        return instance;
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
     }
 }

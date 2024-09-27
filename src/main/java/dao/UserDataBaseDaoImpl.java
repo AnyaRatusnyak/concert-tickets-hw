@@ -4,26 +4,29 @@ import jakarta.persistence.Query;
 import model.TicketDataBase;
 import model.UserDataBase;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import util.HibernateUtil;
 
 import java.util.List;
 
 @Repository
 public class UserDataBaseDaoImpl implements UserDataBaseDao {
+    private final SessionFactory sessionFactory;
     private final TicketDataBaseDao ticketDataBaseDao;
     private static final String QUERY_DELETE_TICKETS = "DELETE FROM TicketDataBase t WHERE t.user.id = :userId";
 
-    public UserDataBaseDaoImpl(@Autowired TicketDataBaseDao ticketDataBaseDao) {
+    @Autowired
+    public UserDataBaseDaoImpl(SessionFactory sessionFactory, TicketDataBaseDao ticketDataBaseDao) {
+        this.sessionFactory = sessionFactory;
         this.ticketDataBaseDao = ticketDataBaseDao;
     }
 
     @Override
     public UserDataBase save(UserDataBase userDataBase) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             session.save(userDataBase);
             transaction.commit();
@@ -38,7 +41,7 @@ public class UserDataBaseDaoImpl implements UserDataBaseDao {
 
     @Override
     public UserDataBase get(Long id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             return session.get(UserDataBase.class, id);
         } catch (RuntimeException e) {
             throw new RuntimeException("Can't get user with id " + id);
@@ -48,7 +51,7 @@ public class UserDataBaseDaoImpl implements UserDataBaseDao {
     @Override
     public UserDataBase updateUserAndTickets(Long userId, UserDataBase updatedUser, List<TicketDataBase> updatedTickets) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             UserDataBase user = session.get(UserDataBase.class, userId);
             if (user == null) {
@@ -79,7 +82,7 @@ public class UserDataBaseDaoImpl implements UserDataBaseDao {
 
     @Override
     public boolean delete(Long id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             Query deleteTicketsQuery = session.createQuery(QUERY_DELETE_TICKETS);
             deleteTicketsQuery.setParameter("userId", id);
