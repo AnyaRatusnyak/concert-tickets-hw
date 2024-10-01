@@ -1,14 +1,18 @@
 package dao;
 
 import jakarta.persistence.Query;
+import model.BusTicket;
 import model.TicketDataBase;
 import model.UserDataBase;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -16,6 +20,8 @@ public class UserDataBaseDaoImpl implements UserDataBaseDao {
     private final SessionFactory sessionFactory;
     private final TicketDataBaseDao ticketDataBaseDao;
     private static final String QUERY_DELETE_TICKETS = "DELETE FROM TicketDataBase t WHERE t.user.id = :userId";
+    @Value("${userActivation.enabled}")
+    private boolean isUserActivationEnabled;
 
     @Autowired
     public UserDataBaseDaoImpl(SessionFactory sessionFactory, TicketDataBaseDao ticketDataBaseDao) {
@@ -96,6 +102,35 @@ public class UserDataBaseDaoImpl implements UserDataBaseDao {
             return true;
         } catch (Exception e) {
             throw new RuntimeException("Error while deleting user with id " + id, e);
+        }
+    }
+
+    @Transactional
+    @Override
+    public UserDataBase activateUser(UserDataBase userDataBase) {
+        if (!isUserActivationEnabled) {
+            throw new RuntimeException("User activation feature is turned OFF.");
+        }
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            UserDataBase user = session.get(UserDataBase.class, userDataBase.getId());
+            if (user == null) {
+                throw new RuntimeException("User with id " + userDataBase.getId() + " does not exist");
+            }
+            user.setUserStatus(UserDataBase.UserStatus.ACTIVATED);
+            session.update(user);
+
+            TicketDataBase newTicket = new TicketDataBase();
+            newTicket.setUser(user);
+            newTicket.setTicketType(BusTicket.TicketType.DAY);
+            newTicket.setCreationDate(LocalDate.now());
+            session.save(newTicket);
+
+            transaction.commit();
+
+            return user;
+        } catch (Exception e) {
+            throw new RuntimeException("Error while activating user with id " + userDataBase.getId(), e);
         }
     }
 }

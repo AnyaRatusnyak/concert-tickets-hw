@@ -20,4 +20,9 @@ public class UserDataBase {
     private Long id;
     private String name;
     private LocalDate creationDate;
+    private UserStatus userStatus;
+
+    public enum UserStatus {
+        ACTIVATED, NOTACTIVATED
+    }
 }

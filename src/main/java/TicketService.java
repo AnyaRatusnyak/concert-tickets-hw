@@ -1,14 +1,23 @@
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import config.AppConfig;
 import dao.TicketDataBaseDao;
 import dao.UserDataBaseDao;
 import model.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.io.Resource;
 import util.NullableWarningValidator;
 import util.TicketValidator;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class TicketService {
@@ -66,8 +75,6 @@ public class TicketService {
 
         TicketDataBaseDao ticketDataBaseDao = context.getBean(TicketDataBaseDao.class);
         UserDataBaseDao userDataBaseDao = context.getBean(UserDataBaseDao.class);
-
-
         System.out.println(userDataBaseDao.get(2L));
         System.out.println(ticketDataBaseDao.getByUserId(2L));
 
@@ -84,7 +91,10 @@ public class TicketService {
         System.out.println(ticketDataBaseDao.getByUserId(2L));
         System.out.println(ticketDataBaseDao.getByUserId(2L));
 
-
+        System.out.println(loadTicketsToArrayList(context, "tickets.json"));
+        updateUser = userDataBaseDao.activateUser(updateUser);
+        System.out.println(updateUser);
+        System.out.println(ticketDataBaseDao.getByUserId(2L));
     }
 
     private static void printTicketsInfo(List<BusTicket> busTickets) {
@@ -121,5 +131,25 @@ public class TicketService {
             }
         }
         return ticketsInSector.toArray(new Ticket[0]);
+    }
+
+    private static ArrayList<Map<String, Object>> loadTicketsToArrayList(ApplicationContext context, String path) {
+        Resource aClasspathTemplate = context.getResource("classpath:" + path);
+
+        if (aClasspathTemplate.exists()) {
+            try (InputStream inputStream = aClasspathTemplate.getInputStream();
+                 InputStreamReader reader = new InputStreamReader(inputStream)) {
+                Gson gson = new Gson();
+                Type listType = new TypeToken<ArrayList<Map<String, Object>>>() {
+                }.getType();
+                ArrayList<Map<String, Object>> list = gson.fromJson(reader, listType);
+                return list;
+
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading the resource", e);
+            }
+        } else {
+            throw new RuntimeException("File not found: " + path);
+        }
     }
 }
