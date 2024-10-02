@@ -112,7 +112,6 @@ public class UserDataBaseDaoImpl implements UserDataBaseDao {
             throw new RuntimeException("User activation feature is turned OFF.");
         }
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
             UserDataBase user = session.get(UserDataBase.class, userDataBase.getId());
             if (user == null) {
                 throw new RuntimeException("User with id " + userDataBase.getId() + " does not exist");
@@ -125,8 +124,6 @@ public class UserDataBaseDaoImpl implements UserDataBaseDao {
             newTicket.setTicketType(BusTicket.TicketType.DAY);
             newTicket.setCreationDate(LocalDate.now());
             session.save(newTicket);
-
-            transaction.commit();
 
             return user;
         } catch (Exception e) {
