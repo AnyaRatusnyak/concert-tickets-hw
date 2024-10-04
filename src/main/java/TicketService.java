@@ -1,14 +1,24 @@
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import config.AppConfig;
 import dao.TicketDataBaseDao;
 import dao.UserDataBaseDao;
 import model.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.io.Resource;
 import util.NullableWarningValidator;
+import util.ResourceLoader;
 import util.TicketValidator;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class TicketService {
@@ -66,8 +76,6 @@ public class TicketService {
 
         TicketDataBaseDao ticketDataBaseDao = context.getBean(TicketDataBaseDao.class);
         UserDataBaseDao userDataBaseDao = context.getBean(UserDataBaseDao.class);
-
-
         System.out.println(userDataBaseDao.get(2L));
         System.out.println(ticketDataBaseDao.getByUserId(2L));
 
@@ -84,7 +92,11 @@ public class TicketService {
         System.out.println(ticketDataBaseDao.getByUserId(2L));
         System.out.println(ticketDataBaseDao.getByUserId(2L));
 
-
+        ResourceLoader resourceLoader = context.getBean(ResourceLoader.class);
+        System.out.println(resourceLoader.loadTicketsToArrayList("tickets.json"));
+        updateUser = userDataBaseDao.activateUser(updateUser);
+        System.out.println(updateUser);
+        System.out.println(ticketDataBaseDao.getByUserId(2L));
     }
 
     private static void printTicketsInfo(List<BusTicket> busTickets) {

@@ -13,4 +13,6 @@ public interface UserDataBaseDao {
     boolean delete(Long id);
 
     UserDataBase updateUserAndTickets(Long userId, UserDataBase updatedUser, List<TicketDataBase> updatedTickets);
+
+    UserDataBase activateUser(UserDataBase userDataBase);
 }
