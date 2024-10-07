@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-public class TicketDataBase {
+public class TicketInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,7 +20,7 @@ public class TicketDataBase {
     private LocalDate creationDate;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserDataBase user;
+    private UserInfo user;
 
     public enum TicketDataBaseType {
         DAY, WEEK, MONTH, YEAR

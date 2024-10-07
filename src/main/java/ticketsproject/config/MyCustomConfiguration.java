@@ -12,7 +12,7 @@ public class MyCustomConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "creationMyFirstConditionalBean", havingValue = "true")
-    public String ThisIsMyFirstConditionalBean() {
+    public String thisIsMyFirstConditionalBean() {
         logger.info("ThisIsMyFirstConditionalBean is created");
         return "This is my first conditional bean!";
     }

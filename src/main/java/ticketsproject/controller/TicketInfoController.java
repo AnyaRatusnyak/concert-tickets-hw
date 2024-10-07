@@ -5,17 +5,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ticketsproject.model.TicketDataBase;
-import ticketsproject.service.TicketDataBaseService;
+import ticketsproject.model.TicketInfo;
+import ticketsproject.service.TicketInfoService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/tickets")
-public class TicketDataBaseController {
-    private final TicketDataBaseService ticketDataBaseService;
+public class TicketInfoController {
+    private final TicketInfoService ticketInfoService;
 
     @GetMapping("/{id}")
-    public TicketDataBase getTicketById(@PathVariable Long id) {
-        return ticketDataBaseService.findById(id);
+    public TicketInfo getTicketById(@PathVariable Long id) {
+        return ticketInfoService.findById(id);
     }
 }
