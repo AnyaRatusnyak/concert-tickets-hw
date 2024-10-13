@@ -62,7 +62,7 @@ public class TicketService {
 
     }
 
-    private static void printTicketsInfo(List<BusTicket> busTickets) {
+    static void printTicketsInfo(List<BusTicket> busTickets) {
         TicketValidator validator = new TicketValidator();
         int size = busTickets.size();
         int validTickets = 0;
@@ -79,7 +79,7 @@ public class TicketService {
         System.out.println("Most popular violation= " + validator.getMostFrequentError());
     }
 
-    private static Ticket findById(int id, Ticket[] tickets) {
+    static Ticket findById(int id, Ticket[] tickets) {
         for (Ticket ticket : tickets) {
             if (ticket.getId() == id) {
                 return ticket;
@@ -88,7 +88,7 @@ public class TicketService {
         throw new NoSuchElementException("No ticket found with ID: " + id);
     }
 
-    private static Ticket[] findByStadiumSector(String sector, Ticket[] tickets) {
+    static Ticket[] findByStadiumSector(String sector, Ticket[] tickets) {
         List<Ticket> ticketsInSector = new ArrayList<>();
         for (Ticket ticket : tickets) {
             if (ticket.getStadiumSector().equals(sector)) {
