@@ -59,7 +59,7 @@ class TicketServiceTest {
     }
 
     @Test
-    void findById_NonExistingId_ThrowsEntityNotFoundException() {
+    void findById_NonExistingId_ThrowsNoSuchElementException() {
         NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
             TicketService.findById(NON_EXISTING_ID, tickets);
         });
